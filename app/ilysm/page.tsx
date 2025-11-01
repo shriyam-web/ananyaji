@@ -14,6 +14,8 @@ export default function SecretLovePage() {
   const [isMounted, setIsMounted] = useState(false);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
+  const [showIdentityModal, setShowIdentityModal] = useState(false);
+  const [identityStep, setIdentityStep] = useState<'choice' | 'sasur' | 'ananya'>('choice');
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const loveQuotes = [
@@ -100,6 +102,24 @@ export default function SecretLovePage() {
 
   const downloadWeddingCard = () => {
     window.print();
+  };
+
+  const openIdentityModal = () => {
+    setIdentityStep('choice');
+    setShowIdentityModal(true);
+  };
+
+  const closeIdentityModal = () => {
+    setShowIdentityModal(false);
+    setIdentityStep('choice');
+  };
+
+  const handleIdentitySasur = () => {
+    setIdentityStep('sasur');
+  };
+
+  const handleIdentityAnanya = () => {
+    setIdentityStep('ananya');
   };
 
   return (
@@ -230,6 +250,65 @@ export default function SecretLovePage() {
             <div className="absolute -top-3 right-1/3 text-4xl animate-bounce" style={{ animationDelay: '0.5s' }}>✨</div>
             <div className="absolute -bottom-3 left-[45%] text-4xl animate-bounce" style={{ animationDelay: '0.3s' }}>💫</div>
             <div className="absolute -bottom-3 right-[45%] text-4xl animate-bounce" style={{ animationDelay: '0.7s' }}>�</div>
+          </div>
+        </div>
+      )}
+
+      {showIdentityModal && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-md mx-4 bg-white rounded-3xl shadow-2xl border-4 border-rose-200 p-8 text-center">
+            <button
+              type="button"
+              onClick={closeIdentityModal}
+              className="absolute top-4 right-4 text-3xl font-bold text-rose-500 hover:text-rose-600"
+            >
+              ×
+            </button>
+            {identityStep === 'choice' && (
+              <div className="space-y-6 mt-4">
+                <h2 className="text-3xl font-bold text-rose-600">Are you Ananya ji or Sasur ji?</h2>
+                <div className="flex flex-col gap-4">
+                  <button
+                    type="button"
+                    onClick={handleIdentityAnanya}
+                    className="w-full rounded-full bg-gradient-to-r from-pink-500 via-rose-500 to-purple-500 text-white text-xl font-semibold py-3 shadow-xl hover:scale-105 transition-transform"
+                  >
+                    Ananya ji
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleIdentitySasur}
+                    className="w-full rounded-full bg-gradient-to-r from-purple-500 via-rose-500 to-pink-500 text-white text-xl font-semibold py-3 shadow-xl hover:scale-105 transition-transform"
+                  >
+                    Sasur ji
+                  </button>
+                </div>
+              </div>
+            )}
+            {identityStep === 'sasur' && (
+              <div className="space-y-6 mt-8">
+                <p className="text-2xl font-bold text-rose-600">Pranaam from a sanskaari future daamad 😂 okay ji bye 🥹🙏</p>
+                <button
+                  type="button"
+                  onClick={closeIdentityModal}
+                  className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 text-white text-xl font-semibold py-3 shadow-xl hover:scale-105 transition-transform"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+            {identityStep === 'ananya' && (
+              <div className="space-y-6 mt-8">
+                <p className="text-2xl font-bold text-rose-600">I need to confirm first!</p>
+                <button
+                  type="button"
+                  onClick={() => setIdentityStep('choice')}
+                  className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 text-white text-xl font-semibold py-3 shadow-xl hover:scale-105 transition-transform"
+                >
+                  Okay
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -537,9 +616,13 @@ export default function SecretLovePage() {
                 <p className="text-3xl font-medium text-rose-500 italic">
                   Forever and always yours,
                 </p>
-                <p className="text-5xl font-extrabold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent">
+                <button
+                  type="button"
+                  onClick={openIdentityModal}
+                  className="text-5xl font-extrabold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent"
+                >
                   Your Shriyam 💕✨
-                </p>
+                </button>
                 <div className="flex items-center justify-center gap-3 text-4xl">
                   <span className="animate-bounce">💖</span>
                   <span className="animate-bounce" style={{ animationDelay: '0.2s' }}>💝</span>
@@ -611,7 +694,13 @@ export default function SecretLovePage() {
                   </p>
 
                   <div className="text-6xl font-bold text-rose-800 space-y-4 font-serif">
-                    <p className="drop-shadow-md">Shriyam</p>
+                    <button
+                      type="button"
+                      onClick={openIdentityModal}
+                      className="drop-shadow-md text-rose-800"
+                    >
+                      Shriyam
+                    </button>
                     <div className="flex items-center justify-center gap-4 text-5xl">
                       <span className="animate-bounce">💍</span>
                       <span className="text-4xl">&</span>
