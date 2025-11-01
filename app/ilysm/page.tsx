@@ -4,6 +4,10 @@ import { FormEvent, useState, useEffect, useRef } from 'react';
 
 const PASSWORD = 'myloveananya';
 
+type FloatingHeart = { id: number; left: number; top: number; delay: number; size: number; opacity: number; emoji: string };
+type Sparkle = { id: number; left: number; top: number; delay: number; size: number };
+type WeddingSparkle = { id: number; left: number; top: number };
+
 export default function SecretLovePage() {
   const [input, setInput] = useState('');
   const [unlocked, setUnlocked] = useState(false);
@@ -12,6 +16,10 @@ export default function SecretLovePage() {
   const [hearts, setHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [modalDecorHearts, setModalDecorHearts] = useState<FloatingHeart[]>([]);
+  const [backgroundDecorHearts, setBackgroundDecorHearts] = useState<FloatingHeart[]>([]);
+  const [backgroundDecorSparkles, setBackgroundDecorSparkles] = useState<Sparkle[]>([]);
+  const [weddingFooterDecorSparkles, setWeddingFooterDecorSparkles] = useState<WeddingSparkle[]>([]);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [showAudioPlayer, setShowAudioPlayer] = useState(false);
   const [showIdentityModal, setShowIdentityModal] = useState(false);
@@ -31,6 +39,46 @@ export default function SecretLovePage() {
     setIsMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
+    const modalHeartsData = Array.from({ length: 20 }, (_, index) => ({
+      id: index,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 5,
+      size: Math.random() * 50 + 30,
+      opacity: 0.1 + Math.random() * 0.2,
+      emoji: ['❤️', '💕', '💖', '💝'][Math.floor(Math.random() * 4)],
+    }));
+    setModalDecorHearts(modalHeartsData);
+    const backgroundHeartsData = Array.from({ length: 30 }, (_, index) => ({
+      id: index,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 8,
+      size: Math.random() * 40 + 15,
+      opacity: 0.2 + Math.random() * 0.3,
+      emoji: ['❤️', '💕', '💖', '💝', '💗', '💓'][Math.floor(Math.random() * 6)],
+    }));
+    setBackgroundDecorHearts(backgroundHeartsData);
+    const sparkleData = Array.from({ length: 50 }, (_, index) => ({
+      id: index,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 3,
+      size: Math.random() * 20 + 10,
+    }));
+    setBackgroundDecorSparkles(sparkleData);
+    const weddingSparklesData = Array.from({ length: 10 }, (_, index) => ({
+      id: index,
+      left: index * 10,
+      top: Math.random() * 100,
+    }));
+    setWeddingFooterDecorSparkles(weddingSparklesData);
+  }, [isMounted]);
+
   // Rotate quotes every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,6 +86,13 @@ export default function SecretLovePage() {
     }, 5000);
     return () => clearInterval(interval);
   }, [loveQuotes.length]);
+
+  useEffect(() => {
+    if (!isMounted || !showWeddingCard) {
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [isMounted, showWeddingCard]);
 
   // Create hearts when unlocked
   useEffect(() => {
@@ -167,19 +222,19 @@ export default function SecretLovePage() {
           {/* Floating Hearts in Background */}
           {isMounted && (
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {[...Array(20)].map((_, i) => (
+              {modalDecorHearts.map((heart) => (
                 <div
-                  key={`modal-heart-${i}`}
+                  key={`modal-heart-${heart.id}`}
                   className="absolute animate-float-slow"
                   style={{
-                    left: `${Math.random() * 100}%`,
-                    top: `${Math.random() * 100}%`,
-                    animationDelay: `${Math.random() * 5}s`,
-                    fontSize: `${Math.random() * 50 + 30}px`,
-                    opacity: 0.1 + Math.random() * 0.2,
+                    left: `${heart.left}%`,
+                    top: `${heart.top}%`,
+                    animationDelay: `${heart.delay}s`,
+                    fontSize: `${heart.size}px`,
+                    opacity: heart.opacity,
                   }}
                 >
-                  {['❤️', '💕', '💖', '💝'][Math.floor(Math.random() * 4)]}
+                  {heart.emoji}
                 </div>
               ))}
             </div>
@@ -317,32 +372,32 @@ export default function SecretLovePage() {
       {isMounted && (
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Floating Hearts */}
-          {[...Array(30)].map((_, i) => (
+          {backgroundDecorHearts.map((heart) => (
             <div
-              key={`heart-${i}`}
+              key={`heart-${heart.id}`}
               className="absolute animate-float-slow"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 8}s`,
-                fontSize: `${Math.random() * 40 + 15}px`,
-                opacity: 0.2 + Math.random() * 0.3,
+                left: `${heart.left}%`,
+                top: `${heart.top}%`,
+                animationDelay: `${heart.delay}s`,
+                fontSize: `${heart.size}px`,
+                opacity: heart.opacity,
               }}
             >
-              {['❤️', '💕', '💖', '💝', '💗', '💓'][Math.floor(Math.random() * 6)]}
+              {heart.emoji}
             </div>
           ))}
 
           {/* Sparkles */}
-          {[...Array(50)].map((_, i) => (
+          {backgroundDecorSparkles.map((sparkle) => (
             <div
-              key={`sparkle-${i}`}
+              key={`sparkle-${sparkle.id}`}
               className="absolute animate-sparkle"
               style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                fontSize: `${Math.random() * 20 + 10}px`,
+                left: `${sparkle.left}%`,
+                top: `${sparkle.top}%`,
+                animationDelay: `${sparkle.delay}s`,
+                fontSize: `${sparkle.size}px`,
               }}
             >
               ✨
@@ -781,13 +836,13 @@ export default function SecretLovePage() {
               <div className="bg-gradient-to-r from-rose-400 via-pink-400 to-rose-400 p-8 text-center relative">
                 <p className="text-white text-2xl font-bold relative z-10">With All Our Love & Blessings 🙏💕</p>
                 <div className="absolute inset-0 overflow-hidden">
-                  {[...Array(10)].map((_, i) => (
+                  {weddingFooterDecorSparkles.map((sparkle) => (
                     <span
-                      key={i}
+                      key={`wedding-sparkle-${sparkle.id}`}
                       className="absolute text-white/20 text-4xl"
                       style={{
-                        left: `${i * 10}%`,
-                        top: `${Math.random() * 100}%`,
+                        left: `${sparkle.left}%`,
+                        top: `${sparkle.top}%`,
                       }}
                     >
                       ✨
